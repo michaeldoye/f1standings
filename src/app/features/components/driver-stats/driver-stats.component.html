@@ -1,0 +1,32 @@
+<div class="stats-grid">
+  <div class="stat-card" [style.background]="getCardGradient()" [style.border-color]="teamColor()">
+    <div class="stat-label">Championship Pos.</div>
+    <div class="stat-value">{{ standing().positionText }}</div>
+  </div>
+  <div class="stat-card" [style.background]="getCardGradient()" [style.border-color]="teamColor()">
+    <div class="stat-label">Total Points</div>
+    <div class="stat-value">{{ standing().points }}</div>
+  </div>
+<!--  <div class="stat-card" [style.background]="getCardGradient()" [style.border-color]="teamColor()">-->
+<!--    <div class="stat-label">Race Wins</div>-->
+<!--    <div class="stat-value">{{ standing().wins }}</div>-->
+<!--  </div>-->
+  <div class="stat-card" [style.background]="getCardGradient()" [style.border-color]="teamColor()">
+    <div class="stat-label">
+      Win Probability
+      <mat-icon
+        class="info-icon"
+        [matTooltip]="probabilityTooltip()"
+        matTooltipPosition="above"
+        matTooltipClass="probability-tooltip"
+      >
+        info
+      </mat-icon>
+    </div>
+    <div class="stat-value">{{ probability() }}%</div>
+  </div>
+  <div class="stat-card" [style.background]="getCardGradient()" [style.border-color]="teamColor()">
+    <div class="stat-label">Team</div>
+    <div class="stat-value">{{ getTeamName() }}</div>
+  </div>
+</div>

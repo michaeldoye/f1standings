@@ -1,0 +1,29 @@
+<div class="driver-info-section">
+  <h3>Driver Information</h3>
+  <div class="info-grid">
+    <div class="info-item">
+      <span class="label">Full Name:</span>
+      <span class="value">{{ getDriverFullName() }}</span>
+    </div>
+    <div class="info-item">
+      <span class="label">Driver Code:</span>
+      <span class="value">{{ standing().Driver.code }}</span>
+    </div>
+    <div class="info-item">
+      <span class="label">Permanent Number:</span>
+      <span class="value">#{{ standing().Driver.permanentNumber }}</span>
+    </div>
+    <div class="info-item">
+      <span class="label">Nationality:</span>
+      <span class="value">{{ standing().Driver.nationality }}</span>
+    </div>
+    <div class="info-item">
+      <span class="label">Date of Birth:</span>
+      <span class="value">{{ standing().Driver.dateOfBirth }}</span>
+    </div>
+    <div class="info-item">
+      <span class="label">Constructor:</span>
+      <span class="value">{{ standing().Constructors[0]?.name || 'N/A' }}</span>
+    </div>
+  </div>
+</div>

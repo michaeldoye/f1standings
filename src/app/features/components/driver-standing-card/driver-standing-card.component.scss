@@ -1,0 +1,149 @@
+.mat-expansion-panel {
+  margin-bottom: 1rem;
+}
+
+.driver-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.flag-position-container {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 70px;
+
+  .country-flag {
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+
+  .position-number {
+    color: #667eea;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.driver-info {
+  display: flex;
+  flex-direction: column;
+}
+
+//.driver-name {
+//  font-size: 1.2rem;
+//  font-weight: 600;
+//  color: #000;
+//}
+//
+//.driver-code {
+//  font-size: 0.9rem;
+//  font-weight: 500;
+//  color: #666;
+//  letter-spacing: 0.5px;
+//}
+
+.standings-summary {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+
+  .points {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #667eea;
+  }
+
+  .wins {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #666;
+  }
+}
+
+.driver-details {
+  padding: 1.5rem 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: end;
+  padding-top: 1.5rem;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+
+    mat-icon {
+      font-size: 1.2rem;
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    }
+  }
+}
+
+// Dark mode styles
+:host-context(html.dark-theme) {
+  .position-number {
+    color: #93c5fd;
+  }
+
+  .standings-summary {
+    .points {
+      color: #93c5fd;
+    }
+
+    .wins {
+      color: #9ca3af;
+    }
+  }
+
+  .navigation-buttons {
+    border-top: 2px solid #374151;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .driver-header {
+    gap: 0.5rem;
+  }
+
+  .driver-name {
+    display: none;
+  }
+
+  .position-number {
+    padding: 0 !important;
+  }
+
+  .driver-name,
+  .driver-code,
+  .points {
+    font-size: 0.9rem!important;
+  }
+}

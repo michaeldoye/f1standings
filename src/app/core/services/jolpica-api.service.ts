@@ -1,7 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { DriverStanding, JolpicaResponse } from '../models/jolpica.model';
+import {
+  DriverStanding,
+  JolpicaResponse,
+  Race,
+  RaceScheduleResponse,
+} from '../models/jolpica.model';
 
 @Injectable({
   providedIn: 'root',
@@ -26,5 +31,17 @@ export class JolpicaApiService {
         return standingsLists.length > 0 ? standingsLists[0].DriverStandings : [];
       })
     );
+  }
+
+  getCurrentSeasonRaces(): Observable<Race[]> {
+    return this.http
+      .get<RaceScheduleResponse>(`${this.baseUrl}/current.json`)
+      .pipe(map((response) => response.MRData.RaceTable.Races));
+  }
+
+  getRacesByYear(year: number): Observable<Race[]> {
+    return this.http
+      .get<RaceScheduleResponse>(`${this.baseUrl}/${year}.json`)
+      .pipe(map((response) => response.MRData.RaceTable.Races));
   }
 }

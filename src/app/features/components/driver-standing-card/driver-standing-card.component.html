@@ -1,0 +1,44 @@
+<mat-expansion-panel [expanded]="expanded()" (opened)="opened.emit()">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <div class="driver-header">
+        <div class="flag-position-container">
+          <div class="country-flag">
+            {{ countryFlag() }}
+          </div>
+          <div class="position-number">P{{ standing().position }}</div>
+        </div>
+        <div class="driver-info">
+          <span class="driver-name">{{ getDriverFullName() }}</span>
+          <span class="driver-code">{{ standing().Driver.code }}</span>
+        </div>
+      </div>
+    </mat-panel-title>
+    <mat-panel-description>
+      <div class="standings-summary">
+        <span class="points">{{ standing().points }} pts</span>
+        <span class="wins">{{ standing().wins }} wins</span>
+      </div>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <div class="driver-details">
+    <app-driver-stats
+      [standing]="standing()"
+      [teamColor]="teamColor()"
+      [probability]="probability()"
+      [probabilityTooltip]="probabilityTooltip()"
+    />
+
+    <app-driver-info [standing]="standing()" />
+
+    <div class="navigation-buttons">
+      <button mat-button color="primary" [disabled]="isFirst()" (click)="previous.emit()">
+        Previous
+      </button>
+      <button mat-button color="primary" [disabled]="isLast()" (click)="next.emit()">
+        Next
+      </button>
+    </div>
+  </div>
+</mat-expansion-panel>

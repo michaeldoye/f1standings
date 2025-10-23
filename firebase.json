@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "site": "f1standings",
+    "public": "dist/f1standings/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

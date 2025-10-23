@@ -1,6 +1,16 @@
 <mat-toolbar>
   <mat-toolbar-row>
-    <span>Custom Toolbar</span>
+    <span>F1 WDC Standings</span>
+    <span class="spacer"></span>
+    <div class="theme-toggle">
+      <mat-icon>light_mode</mat-icon>
+      <mat-slide-toggle
+        [checked]="isDarkMode()"
+        (change)="toggleDarkMode()"
+        color="primary"
+      ></mat-slide-toggle>
+      <mat-icon>dark_mode</mat-icon>
+    </div>
   </mat-toolbar-row>
 </mat-toolbar>
 

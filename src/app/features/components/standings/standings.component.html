@@ -18,108 +18,19 @@
     <div class="drivers-container">
       <mat-accordion>
         @for (standing of driverStandings(); track standing.Driver.driverId; let i = $index) {
-          <mat-expansion-panel [expanded]="step() === i" (opened)="setStep(i)">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <div class="driver-header">
-                  <div class="flag-position-container">
-                    <div class="country-flag">
-                      {{ getCountryFlag(standing.Driver.nationality) }}
-                    </div>
-                    <div class="position-number">P{{ standing.position }}</div>
-                  </div>
-                  <div class="driver-info">
-                    <span class="driver-name">{{ getDriverFullName(standing) }}</span>
-                    <span class="driver-code">{{ standing.Driver.code }}</span>
-                  </div>
-                </div>
-              </mat-panel-title>
-              <mat-panel-description>
-                <div class="standings-summary">
-                  <span class="points">{{ standing.points }} pts</span>
-                  <span class="wins">{{ standing.wins }} wins</span>
-                </div>
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-
-            <div class="driver-details">
-              <div class="stats-grid">
-                <div
-                  class="stat-card"
-                  [style.background]="getCardGradient(standing)"
-                  [style.border-color]="getTeamColor(standing)"
-                >
-                  <div class="stat-label">Championship Pos.</div>
-                  <div class="stat-value">{{ standing.positionText }}</div>
-                </div>
-                <div
-                  class="stat-card"
-                  [style.background]="getCardGradient(standing)"
-                  [style.border-color]="getTeamColor(standing)"
-                >
-                  <div class="stat-label">Total Points</div>
-                  <div class="stat-value">{{ standing.points }}</div>
-                </div>
-                <div
-                  class="stat-card"
-                  [style.background]="getCardGradient(standing)"
-                  [style.border-color]="getTeamColor(standing)"
-                >
-                  <div class="stat-label">Race Wins</div>
-                  <div class="stat-value">{{ standing.wins }}</div>
-                </div>
-                <div
-                  class="stat-card"
-                  [style.background]="getCardGradient(standing)"
-                  [style.border-color]="getTeamColor(standing)"
-                >
-                  <div class="stat-label">Team</div>
-                  <div class="stat-value">{{ getTeamName(standing) }}</div>
-                </div>
-              </div>
-
-              <div class="driver-info-section">
-                <h3>Driver Information</h3>
-                <div class="info-grid">
-                  <div class="info-item">
-                    <span class="label">Full Name:</span>
-                    <span class="value">{{ getDriverFullName(standing) }}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="label">Driver Code:</span>
-                    <span class="value">{{ standing.Driver.code }}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="label">Permanent Number:</span>
-                    <span class="value">#{{ standing.Driver.permanentNumber }}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="label">Nationality:</span>
-                    <span class="value">{{ standing.Driver.nationality }}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="label">Date of Birth:</span>
-                    <span class="value">{{ standing.Driver.dateOfBirth }}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="label">Constructor:</span>
-                    <span class="value">{{ standing.Constructors[0]?.name || 'N/A' }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <mat-action-row>
-                <button matButton (click)="prevStep()" [disabled]="step() === 0">Previous</button>
-                <button
-                  matButton
-                  (click)="nextStep()"
-                  [disabled]="step() === driverStandings().length - 1"
-                >
-                  Next
-                </button>
-              </mat-action-row>
-            </div>
-          </mat-expansion-panel>
+          <app-driver-standing-card
+            [standing]="standing"
+            [expanded]="step() === i"
+            [countryFlag]="getCountryFlag(standing.Driver.nationality)"
+            [teamColor]="getTeamColor(standing)"
+            [probability]="getChampionshipProbability(standing)"
+            [probabilityTooltip]="getProbabilityTooltip(standing)"
+            [isFirst]="step() === 0"
+            [isLast]="step() === driverStandings().length - 1"
+            (opened)="setStep(i)"
+            (previous)="prevStep()"
+            (next)="nextStep()"
+          />
         }
       </mat-accordion>
     </div>

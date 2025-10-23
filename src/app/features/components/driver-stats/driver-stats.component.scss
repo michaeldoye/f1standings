@@ -1,0 +1,113 @@
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  padding: 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  // Add subtle pattern overlay
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    .info-icon {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      cursor: help;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+      padding: 0.5rem;
+      margin: -0.5rem;
+      border-radius: 50%;
+
+      &:hover {
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      &:active {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #222;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  }
+}
+
+// Dark mode styles
+:host-context(html.dark-theme) {
+  .stat-card {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    .stat-label {
+      color: #9ca3af;
+
+      .info-icon {
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        &:active {
+          background-color: rgba(255, 255, 255, 0.15);
+        }
+      }
+    }
+
+    .stat-value {
+      color: #e5e7eb;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+  }
+}
+
+// Global tooltip styling
+::ng-deep .probability-tooltip {
+  max-width: 400px !important;
+  white-space: pre-line;
+  line-height: 1.6;
+  font-size: 0.875rem;
+  padding: 1rem !important;
+}

@@ -47,3 +47,51 @@ export interface JolpicaResponse {
     StandingsTable: StandingsTable;
   };
 }
+
+export interface Circuit {
+  circuitId: string;
+  circuitName: string;
+  Location: {
+    lat: string;
+    long: string;
+    locality: string;
+    country: string;
+  };
+}
+
+export interface RaceSession {
+  date: string;
+  time?: string;
+}
+
+export interface Race {
+  season: string;
+  round: string;
+  raceName: string;
+  Circuit: Circuit;
+  date: string;
+  time?: string;
+  FirstPractice?: RaceSession;
+  SecondPractice?: RaceSession;
+  ThirdPractice?: RaceSession;
+  Qualifying?: RaceSession;
+  Sprint?: RaceSession;
+  SprintQualifying?: RaceSession;
+}
+
+export interface RaceTable {
+  season: string;
+  Races: Race[];
+}
+
+export interface RaceScheduleResponse {
+  MRData: {
+    xmlns: string;
+    series: string;
+    url: string;
+    limit: string;
+    offset: string;
+    total: string;
+    RaceTable: RaceTable;
+  };
+}

@@ -9,7 +9,8 @@
     "test": "ng test",
     "format": "prettier --write \"src/**/*.{ts,html,scss,css,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss,css,json}\"",
-    "lint:prettier": "prettier --check \"src/**/*.{ts,html,scss,css,json}\""
+    "lint:prettier": "prettier --check \"src/**/*.{ts,html,scss,css,json}\"",
+    "deploy": "firebase deploy --only hosting:f1standings"
   },
   "private": true,
   "dependencies": {
