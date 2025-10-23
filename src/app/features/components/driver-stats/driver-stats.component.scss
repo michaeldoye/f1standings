@@ -49,7 +49,7 @@
       font-size: 1.25rem;
       width: 1.25rem;
       height: 1.25rem;
-      cursor: help;
+      cursor: pointer;
       opacity: 0.7;
       transition: opacity 0.2s ease;
       padding: 0.5rem;
@@ -103,11 +103,8 @@
   }
 }
 
-// Global tooltip styling
-::ng-deep .probability-tooltip {
-  max-width: 400px !important;
-  white-space: pre-line;
-  line-height: 1.6;
-  font-size: 0.875rem;
-  padding: 1rem !important;
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(151px, 1fr));
+  }
 }

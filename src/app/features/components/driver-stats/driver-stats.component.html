@@ -16,9 +16,7 @@
       Win Probability
       <mat-icon
         class="info-icon"
-        [matTooltip]="probabilityTooltip()"
-        matTooltipPosition="above"
-        matTooltipClass="probability-tooltip"
+        (click)="openProbabilityExplanation()"
       >
         info
       </mat-icon>

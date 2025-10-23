@@ -84,6 +84,14 @@ body {
       actions-divider-color: #005cbb,
     )
   );
+
+  @include mat.dialog-overrides(
+    (
+      container-color: #ffffff,
+      supporting-text-color: #222,
+      subhead-color: #222,
+    )
+  );
 }
 
 html.dark-theme {
@@ -97,6 +105,13 @@ html.dark-theme {
   @include mat.expansion-overrides(
     (
       container-background-color: #1e293b,
+    )
+  );
+
+  @include mat.dialog-overrides(
+    (
+      container-color: #1e293b,
+      supporting-text-color: #e5e7eb,
     )
   );
 }
