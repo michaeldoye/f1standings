@@ -23,7 +23,7 @@ import { DriverStandingCardComponent } from '../driver-standing-card/driver-stan
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StandingsComponent implements OnInit {
-  protected readonly step = signal(0);
+  protected readonly step = signal(-1);
   private readonly jolpicaService = inject(JolpicaApiService);
   private readonly openF1Service = inject(OpenF1ApiService);
 
@@ -213,24 +213,24 @@ export class StandingsComponent implements OnInit {
     const leaderPoints = parseFloat(standings[0].points);
     const pointsDeficit = leaderPoints - currentPoints;
 
-    let explanation = 'Win Probability Calculation:\n\n';
+    let explanation = '';
 
     if (standing.position === '1') {
       explanation += `As the championship leader with ${currentPoints} points, `;
       if (probability === 100) {
-        explanation += 'you have mathematically secured the championship!';
+        explanation += `${standing.Driver.givenName} has mathematically secured the championship!`;
       } else {
         const secondPlace = standings.length > 1 ? standings[1] : null;
         const margin = secondPlace ? currentPoints - parseFloat(secondPlace.points) : 0;
-        explanation += `you have a ${margin}-point lead. Your probability (${probability}%) is based on how secure your lead is relative to the remaining points available.`;
+        explanation += `${standing.Driver.givenName} has a ${margin}-point lead. The probability (${probability}%) is based on how secure ${standing.Driver.givenName}'s lead is relative to the remaining points available.`;
       }
     } else if (probability === 0) {
-      explanation += `With ${currentPoints} points and a ${pointsDeficit}-point deficit, you have been mathematically eliminated from championship contention. Even winning all remaining races wouldn't be enough to catch the leader.`;
+      explanation += `With ${currentPoints} points and a ${pointsDeficit}-point deficit, ${standing.Driver.givenName} has been mathematically eliminated from championship contention. Even winning all remaining races wouldn't be enough to catch the leader.`;
     } else {
-      explanation += `With ${currentPoints} points and a ${pointsDeficit}-point deficit from the leader, your probability (${probability}%) is calculated based on:\n\n`;
-      explanation += `• Points deficit vs remaining possible points\n`;
-      explanation += `• Maximum points per race: 25\n`;
-      explanation += `• Maximum points per sprint: 8\n\n`;
+      explanation += `With ${currentPoints} points and a ${pointsDeficit}-point deficit from the leader, ${standing.Driver.givenName}'s probability (${probability}%) is calculated based on:\n\n`;
+      explanation += `Points deficit vs remaining possible points,\n`;
+      explanation += `Maximum points per race (25),\n`;
+      explanation += `Maximum points per sprint (8),\n\n`;
       explanation += `The larger the deficit relative to remaining points, the lower the probability.`;
     }
 

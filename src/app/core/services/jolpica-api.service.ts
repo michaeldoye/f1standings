@@ -44,4 +44,18 @@ export class JolpicaApiService {
       .get<RaceScheduleResponse>(`${this.baseUrl}/${year}.json`)
       .pipe(map((response) => response.MRData.RaceTable.Races));
   }
+
+  /**
+   * Get driver standings for a specific round
+   */
+  getDriverStandingsByRound(year: number, round: number): Observable<DriverStanding[]> {
+    return this.http
+      .get<JolpicaResponse>(`${this.baseUrl}/${year}/${round}/driverStandings.json`)
+      .pipe(
+        map((response) => {
+          const standingsLists = response.MRData.StandingsTable.StandingsLists;
+          return standingsLists.length > 0 ? standingsLists[0].DriverStandings : [];
+        })
+      );
+  }
 }

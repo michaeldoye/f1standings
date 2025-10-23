@@ -14,14 +14,17 @@
   <div class="stat-card" [style.background]="getCardGradient()" [style.border-color]="teamColor()">
     <div class="stat-label">
       Win Probability
+    </div>
+    <div class="stat-value">
+      <span>{{ probability() }}%</span>
       <mat-icon
+        [style.color]="teamColor()"
         class="info-icon"
         (click)="openProbabilityExplanation()"
       >
         info
       </mat-icon>
     </div>
-    <div class="stat-value">{{ probability() }}%</div>
   </div>
   <div class="stat-card" [style.background]="getCardGradient()" [style.border-color]="teamColor()">
     <div class="stat-label">Team</div>

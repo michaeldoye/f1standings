@@ -1,6 +1,7 @@
 .driver-info-section {
   h3 {
     margin: 0 0 1rem 0;
+    color: #666;
   }
 }
 
@@ -29,6 +30,12 @@
 
 // Dark mode styles
 :host-context(html.dark-theme) {
+  .driver-info-section {
+    h3 {
+      margin: 0 0 1rem 0;
+      color: #e0e2ec;
+    }
+  }
   .info-item {
     .label {
       color: #9ca3af;
@@ -37,5 +44,11 @@
     .value {
       color: #e5e7eb;
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .info-grid {
+    gap: 0;
   }
 }

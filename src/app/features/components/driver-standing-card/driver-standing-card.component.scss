@@ -33,6 +33,7 @@
 .driver-info {
   display: flex;
   flex-direction: column;
+  color: #666;
 }
 
 //.driver-name {
@@ -80,34 +81,18 @@
 
   button {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
-
-    mat-icon {
-      font-size: 1.2rem;
-      width: 1.2rem;
-      height: 1.2rem;
-    }
-
-    &:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    &:not(:disabled):hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
-    }
+    color: #005cbb;
   }
 }
 
 // Dark mode styles
 :host-context(html.dark-theme) {
+  .navigation-buttons {
+    button {
+      color: #e0e2ec;
+    }
+  }
+
   .position-number {
     color: #93c5fd;
   }
@@ -125,6 +110,10 @@
   .navigation-buttons {
     border-top: 2px solid #374151;
   }
+
+  .driver-info {
+    color: #e0e2ec;
+  }
 }
 
 // Responsive design
@@ -139,6 +128,10 @@
 
   .position-number {
     padding: 0 !important;
+  }
+  .driver-details {
+    gap: 1rem;
+    padding: .5rem 1.5rem 0;
   }
 
   .driver-name,

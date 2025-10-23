@@ -68,12 +68,18 @@
   }
 
   .stat-value {
-    font-size: 1.75rem;
+    font-size: 1.45rem;
     font-weight: 700;
     color: #222;
     position: relative;
     z-index: 1;
     text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: space-between;
+
+    mat-icon {
+      cursor: pointer;
+    }
   }
 }
 
@@ -105,6 +111,10 @@
 
 @media (max-width: 768px) {
   .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(151px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+
+  .stat-card {
+    padding: .7rem;
   }
 }

@@ -30,10 +30,12 @@
       [probabilityTooltip]="probabilityTooltip()"
     />
 
+    <app-points-progression-chart [standing]="standing()" [teamColor]="teamColor()" />
+
     <app-driver-info [standing]="standing()" />
 
     <div class="navigation-buttons">
-      <button mat-button color="primary" [disabled]="isFirst()" (click)="previous.emit()">
+      <button mat-button color="secondary" [disabled]="isFirst()" (click)="previous.emit()">
         Previous
       </button>
       <button mat-button color="primary" [disabled]="isLast()" (click)="next.emit()">Next</button>

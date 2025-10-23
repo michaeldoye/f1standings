@@ -36,6 +36,18 @@ export interface StandingsTable {
   StandingsLists: StandingsList[];
 }
 
+export interface AllRoundsStandingsResponse {
+  MRData: {
+    xmlns: string;
+    series: string;
+    url: string;
+    limit: string;
+    offset: string;
+    total: string;
+    StandingsTable: StandingsTable;
+  };
+}
+
 export interface JolpicaResponse {
   MRData: {
     xmlns: string;

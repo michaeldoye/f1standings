@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { DriverStanding } from '../../../core/models/jolpica.model';
 import { DriverInfoComponent } from '../driver-info/driver-info.component';
 import { DriverStatsComponent } from '../driver-stats/driver-stats.component';
+import { PointsProgressionChartComponent } from '../points-progression-chart/points-progression-chart.component';
 
 @Component({
   selector: 'app-driver-standing-card',
@@ -14,6 +15,7 @@ import { DriverStatsComponent } from '../driver-stats/driver-stats.component';
     MatIconModule,
     DriverStatsComponent,
     DriverInfoComponent,
+    PointsProgressionChartComponent,
   ],
   templateUrl: './driver-standing-card.component.html',
   styleUrl: './driver-standing-card.component.scss',
