@@ -3,8 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { DriverStanding } from '../../../core/models/jolpica.model';
 import {
-  ProbabilityExplanationDialogComponent,
   ProbabilityExplanationData,
+  ProbabilityExplanationDialogComponent,
 } from '../probability-explanation-dialog/probability-explanation-dialog.component';
 
 @Component({
@@ -33,13 +33,13 @@ export class DriverStatsComponent {
   }
 
   protected openProbabilityExplanation(): void {
-    this.dialog.open<
+    this.dialog.open<ProbabilityExplanationDialogComponent, ProbabilityExplanationData>(
       ProbabilityExplanationDialogComponent,
-      ProbabilityExplanationData
-    >(ProbabilityExplanationDialogComponent, {
-      data: {
-        explanation: this.probabilityTooltip(),
-      },
-    });
+      {
+        data: {
+          explanation: this.probabilityTooltip(),
+        },
+      }
+    );
   }
 }
