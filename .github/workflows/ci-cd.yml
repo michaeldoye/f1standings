@@ -30,7 +30,7 @@ jobs:
         run: npm run format:check
 
       - name: Run tests with coverage
-        run: npm run test -- --no-watch --code-coverage --browsers=ChromeHeadlessCI
+        run: npm run test -- --no-watch --code-coverage --browsers=ChromeHeadless
 
       - name: Build application
         run: npm run build -- --configuration production
