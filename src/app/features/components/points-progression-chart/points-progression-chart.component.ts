@@ -1,9 +1,18 @@
-import { Component, OnDestroy, OnInit, ViewChild, effect, inject, input, signal } from '@angular/core';
-import { BaseChartDirective } from 'ng2-charts';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { ChartConfiguration, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import { forkJoin } from 'rxjs';
 import { DriverStanding, Race, StandingsList } from '../../../core/models/jolpica.model';
 import { JolpicaApiService } from '../../../core/services/jolpica-api.service';
-import { forkJoin } from 'rxjs';
 
 interface PointsProgression {
   round: number;
@@ -89,7 +98,7 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
           callbacks: {
             title: (tooltipItems) => {
               const index = tooltipItems[0].dataIndex;
-              return this.lineChartData.labels?.[index] as string || '';
+              return (this.lineChartData.labels?.[index] as string) || '';
             },
             label: (context) => {
               const label = context.dataset.label || '';
@@ -151,7 +160,7 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
         }
 
         // Get season from races data
-        const season = parseInt(races[0].season, 10);
+        const season = Number.parseInt(races[0].season, 10);
 
         // Determine which races are completed
         const now = new Date();
@@ -162,7 +171,7 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
 
         // Fetch standings for each completed round
         const standingsRequests = completedRaces.map((race) =>
-          this.jolpicaService.getDriverStandingsByRound(season, parseInt(race.round, 10))
+          this.jolpicaService.getDriverStandingsByRound(season, Number.parseInt(race.round, 10))
         );
 
         if (standingsRequests.length === 0) {
@@ -203,12 +212,12 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
       );
 
       if (driverStanding) {
-        const roundNum = parseInt(roundStandings.round, 10);
-        const race = races.find((r) => parseInt(r.round, 10) === roundNum);
+        const roundNum = Number.parseInt(roundStandings.round, 10);
+        const race = races.find((r) => Number.parseInt(r.round, 10) === roundNum);
 
         progression.push({
           round: roundNum,
-          points: parseFloat(driverStanding.points),
+          points: Number.parseFloat(driverStanding.points),
           raceName: race?.raceName || `Round ${roundNum}`,
           isProjected: false,
         });
@@ -222,10 +231,12 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
     const lastRound = progression.length > 0 ? progression[progression.length - 1] : null;
     if (lastRound && progression.length > 0) {
       // Sort races by round number
-      const sortedRaces = [...races].sort((a, b) => parseInt(a.round, 10) - parseInt(b.round, 10));
+      const sortedRaces = [...races].sort(
+        (a, b) => Number.parseInt(a.round, 10) - Number.parseInt(b.round, 10)
+      );
 
       const remainingRaces = sortedRaces.filter((race) => {
-        const roundNum = parseInt(race.round, 10);
+        const roundNum = Number.parseInt(race.round, 10);
         const raceDate = this.getRaceDate(race);
         return roundNum > lastRound.round && raceDate.getTime() > new Date().getTime();
       });
@@ -251,7 +262,7 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
 
       let lastProjectedPoints = lastRound.points;
       remainingRaces.forEach((race) => {
-        const roundNum = parseInt(race.round, 10);
+        const roundNum = Number.parseInt(race.round, 10);
         lastProjectedPoints += avgPointsPerRace;
 
         progression.push({
@@ -276,7 +287,8 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
       } else {
         actualDataPoints.push(p.points);
         // Add connection point for projected line
-        const isLastActual = progression.findIndex((item) => item.isProjected) - 1 === progression.indexOf(p);
+        const isLastActual =
+          progression.findIndex((item) => item.isProjected) - 1 === progression.indexOf(p);
         projectedDataPoints.push(isLastActual ? p.points : null);
       }
     });

@@ -121,11 +121,11 @@ export class StandingsComponent implements OnInit {
     });
 
     // Get leader's points
-    const leaderPoints = parseFloat(standings[0].points);
+    const leaderPoints = Number.parseFloat(standings[0].points);
 
     // Calculate probability for each driver
     standings.forEach((standing) => {
-      const driverPoints = parseFloat(standing.points);
+      const driverPoints = Number.parseFloat(standing.points);
       const maxPossiblePoints = driverPoints + maxRemainingPoints;
       const pointsDeficit = leaderPoints - driverPoints;
 
@@ -136,7 +136,7 @@ export class StandingsComponent implements OnInit {
         probability = 0;
       } else if (standing.position === '1') {
         // Current leader - calculate based on how secure their lead is
-        const secondPlacePoints = standings.length > 1 ? parseFloat(standings[1].points) : 0;
+        const secondPlacePoints = standings.length > 1 ? Number.parseFloat(standings[1].points) : 0;
         const leadMargin = leaderPoints - secondPlacePoints;
 
         if (leadMargin > maxRemainingPoints) {
@@ -205,12 +205,12 @@ export class StandingsComponent implements OnInit {
 
   protected getProbabilityTooltip(standing: DriverStanding): string {
     const probability = this.getChampionshipProbability(standing);
-    const currentPoints = parseFloat(standing.points);
+    const currentPoints = Number.parseFloat(standing.points);
     const standings = this.driverStandings();
 
     if (standings.length === 0) return '';
 
-    const leaderPoints = parseFloat(standings[0].points);
+    const leaderPoints = Number.parseFloat(standings[0].points);
     const pointsDeficit = leaderPoints - currentPoints;
 
     let explanation = '';
@@ -221,7 +221,7 @@ export class StandingsComponent implements OnInit {
         explanation += `${standing.Driver.givenName} has mathematically secured the championship!`;
       } else {
         const secondPlace = standings.length > 1 ? standings[1] : null;
-        const margin = secondPlace ? currentPoints - parseFloat(secondPlace.points) : 0;
+        const margin = secondPlace ? currentPoints - Number.parseFloat(secondPlace.points) : 0;
         explanation += `${standing.Driver.givenName} has a ${margin}-point lead. The probability (${probability}%) is based on how secure ${standing.Driver.givenName}'s lead is relative to the remaining points available.`;
       }
     } else if (probability === 0) {
