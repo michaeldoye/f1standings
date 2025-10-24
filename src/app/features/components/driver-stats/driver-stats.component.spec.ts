@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DriverStanding } from '../../../core/models/jolpica.model';
@@ -33,7 +34,7 @@ describe('DriverStatsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DriverStatsComponent, MatIconModule, MatTooltipModule],
+      imports: [DriverStatsComponent, MatIconModule, MatTooltipModule, MatDialogModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DriverStatsComponent);

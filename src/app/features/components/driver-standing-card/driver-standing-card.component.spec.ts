@@ -1,8 +1,12 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { DriverStanding } from '../../../core/models/jolpica.model';
 import { DriverInfoComponent } from '../driver-info/driver-info.component';
 import { DriverStatsComponent } from '../driver-stats/driver-stats.component';
@@ -44,7 +48,13 @@ describe('DriverStandingCardComponent', () => {
         MatExpansionModule,
         MatButtonModule,
         MatIconModule,
+        MatDialogModule,
         NoopAnimationsModule,
+      ],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideCharts(withDefaultRegisterables()),
       ],
     }).compileComponents();
 

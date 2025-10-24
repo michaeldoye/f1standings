@@ -1,8 +1,12 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { of, throwError } from 'rxjs';
 import { Driver } from '../../../core/models/driver.model';
 import { DriverStanding, Race } from '../../../core/models/jolpica.model';
@@ -136,6 +140,7 @@ describe('StandingsComponent', () => {
     const jolpicaSpy = jasmine.createSpyObj('JolpicaApiService', [
       'getCurrentDriverStandings',
       'getCurrentSeasonRaces',
+      'getDriverStandingsByRound',
     ]);
     const openF1Spy = jasmine.createSpyObj('OpenF1ApiService', ['getLatestSessionDrivers']);
 
@@ -146,11 +151,15 @@ describe('StandingsComponent', () => {
         MatExpansionModule,
         MatCardModule,
         MatProgressSpinnerModule,
+        MatDialogModule,
         NoopAnimationsModule,
       ],
       providers: [
         { provide: JolpicaApiService, useValue: jolpicaSpy },
         { provide: OpenF1ApiService, useValue: openF1Spy },
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideCharts(withDefaultRegisterables()),
       ],
     }).compileComponents();
 
@@ -159,6 +168,7 @@ describe('StandingsComponent', () => {
 
     jolpicaService.getCurrentDriverStandings.and.returnValue(of(mockDriverStandings));
     jolpicaService.getCurrentSeasonRaces.and.returnValue(of(mockRaces));
+    jolpicaService.getDriverStandingsByRound.and.returnValue(of(mockDriverStandings));
     openF1Service.getLatestSessionDrivers.and.returnValue(of(mockDrivers));
 
     fixture = TestBed.createComponent(StandingsComponent);
@@ -269,7 +279,7 @@ describe('StandingsComponent', () => {
     fixture.detectChanges();
     setTimeout(() => {
       const tooltip = component['getProbabilityTooltip'](mockDriverStandings[0]);
-      expect(tooltip).toContain('Win Probability Calculation');
+      expect(tooltip).toContain('championship leader');
       done();
     }, 100);
   });
