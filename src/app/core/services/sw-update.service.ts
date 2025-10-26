@@ -42,7 +42,7 @@ export class SwUpdateService {
     // Allow the app to stabilize first, before starting
     // polling for updates with `interval()`.
     const appIsStable$ = this.appRef.isStable.pipe(first((isStable) => isStable));
-    const everySixHours$ = interval(6 * 60 * 60 * 1000); // Check every 6 hours
+    const everySixHours$ = interval(6 * 60 * 60); // Check every 6 hours
     const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$);
 
     everySixHoursOnceAppIsStable$.subscribe(async () => {
