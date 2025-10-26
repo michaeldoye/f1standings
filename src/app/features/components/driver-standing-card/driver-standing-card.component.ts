@@ -29,6 +29,8 @@ export class DriverStandingCardComponent {
   readonly probabilityTooltip = input.required<string>();
   readonly isFirst = input.required<boolean>();
   readonly isLast = input.required<boolean>();
+  readonly allStandings = input.required<DriverStanding[]>();
+  readonly teamColors = input.required<Map<string, string>>();
 
   readonly opened = output<void>();
   readonly previous = output<void>();

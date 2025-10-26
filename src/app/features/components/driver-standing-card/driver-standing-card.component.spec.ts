@@ -39,6 +39,9 @@ describe('DriverStandingCardComponent', () => {
     ],
   };
 
+  const mockAllStandings: DriverStanding[] = [mockStanding];
+  const mockTeamColors = new Map<string, string>([['1', '0600EF']]);
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -68,6 +71,8 @@ describe('DriverStandingCardComponent', () => {
     fixture.componentRef.setInput('probabilityTooltip', 'Test tooltip');
     fixture.componentRef.setInput('isFirst', false);
     fixture.componentRef.setInput('isLast', false);
+    fixture.componentRef.setInput('allStandings', mockAllStandings);
+    fixture.componentRef.setInput('teamColors', mockTeamColors);
     fixture.detectChanges();
   });
 

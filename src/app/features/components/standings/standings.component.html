@@ -27,6 +27,8 @@
             [probabilityTooltip]="getProbabilityTooltip(standing)"
             [isFirst]="step() === 0"
             [isLast]="step() === driverStandings().length - 1"
+            [allStandings]="driverStandings()"
+            [teamColors]="teamColors()"
             (opened)="setStep(i)"
             (previous)="prevStep()"
             (next)="nextStep()"

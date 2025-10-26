@@ -30,7 +30,12 @@
       [probabilityTooltip]="probabilityTooltip()"
     />
 
-    <app-points-progression-chart [standing]="standing()" [teamColor]="teamColor()" />
+    <app-points-progression-chart
+      [standing]="standing()"
+      [teamColor]="teamColor()"
+      [allStandings]="allStandings()"
+      [teamColors]="teamColors()"
+    />
 
     <app-driver-info [standing]="standing()" />
 

@@ -1,6 +1,16 @@
 <div class="chart-container">
   <div class="chart-header">
     <h3>Points Progression</h3>
+    <mat-form-field class="driver-selector" appearance="outline">
+      <mat-label>Compare Drivers</mat-label>
+      <mat-select multiple [value]="selectedDriverIds()">
+        @for (driver of availableDrivers(); track driver.driverId) {
+          <mat-option [value]="driver.driverId" (click)="toggleDriver(driver.driverId)">
+            {{ driver.name }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
     <div class="legend">
       <span class="legend-item">
         <span class="legend-line actual"></span>

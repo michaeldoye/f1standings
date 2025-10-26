@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   OnDestroy,
@@ -8,6 +9,9 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { concatMap, delay, from, map, of, switchMap, toArray } from 'rxjs';
@@ -21,9 +25,16 @@ interface PointsProgression {
   isProjected: boolean;
 }
 
+interface DriverSelection {
+  driverId: string;
+  name: string;
+  teamColor: string;
+  selected: boolean;
+}
+
 @Component({
   selector: 'app-points-progression-chart',
-  imports: [BaseChartDirective],
+  imports: [BaseChartDirective, CommonModule, MatFormFieldModule, MatSelectModule, FormsModule],
   templateUrl: './points-progression-chart.component.html',
   styleUrl: './points-progression-chart.component.scss',
 })
@@ -35,9 +46,16 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
 
   readonly standing = input.required<DriverStanding>();
   readonly teamColor = input.required<string>();
+  readonly allStandings = input.required<DriverStanding[]>();
+  readonly teamColors = input.required<Map<string, string>>();
+
+  protected readonly availableDrivers = signal<DriverSelection[]>([]);
+  protected readonly selectedDriverIds = signal<string[]>([]);
 
   private readonly isDarkMode = signal(false);
   private themeObserver?: MutationObserver;
+  private races: Race[] = [];
+  private standingsByRound: StandingsList[] = [];
 
   public lineChartType: ChartType = 'line';
   public lineChartData: ChartConfiguration['data'] = {
@@ -52,8 +70,17 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
 
     // Watch for theme changes
     effect(() => {
+      this.updateDarkMode();
       this.updateChartOptions();
       this.chart?.update();
+    });
+
+    // Watch for driver selection changes
+    effect(() => {
+      const selectedIds = this.selectedDriverIds();
+      if (selectedIds.length > 0 && this.standingsByRound.length > 0) {
+        this.buildMultiDriverChartData();
+      }
     });
 
     // Observe theme changes
@@ -69,6 +96,37 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.themeObserver?.disconnect();
+  }
+
+
+  private initializeDrivers(): void {
+    const currentDriverId = this.standing().Driver.driverId;
+    const drivers: DriverSelection[] = this.allStandings().map((standing) => ({
+      driverId: standing.Driver.driverId,
+      name: `${standing.Driver.givenName} ${standing.Driver.familyName}`,
+      teamColor: this.getDriverColor(standing),
+      selected: standing.Driver.driverId === currentDriverId,
+    }));
+
+    this.availableDrivers.set(drivers);
+    this.selectedDriverIds.set([currentDriverId]);
+  }
+
+  private getDriverColor(standing: DriverStanding): string {
+    const color = this.teamColors().get(standing.Driver.permanentNumber);
+    return color ? `#${color}` : '#667eea';
+  }
+
+  protected toggleDriver(driverId: string): void {
+    const drivers = this.availableDrivers();
+    const driver = drivers.find((d) => d.driverId === driverId);
+    if (driver) {
+      driver.selected = !driver.selected;
+      this.availableDrivers.set([...drivers]);
+
+      const selectedIds = drivers.filter((d) => d.selected).map((d) => d.driverId);
+      this.selectedDriverIds.set(selectedIds);
+    }
   }
 
   private updateDarkMode(): void {
@@ -149,6 +207,7 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initializeDrivers();
     this.loadPointsProgression();
   }
 
@@ -203,7 +262,9 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
             return;
           }
 
-          this.buildChartData(standingsByRound, races);
+          this.races = races;
+          this.standingsByRound = standingsByRound;
+          this.buildMultiDriverChartData();
         },
         error: (err) => {
           console.error('Error loading points progression data:', err);
@@ -211,19 +272,109 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
       });
   }
 
-  private buildChartData(standingsByRound: StandingsList[], races: Race[]): void {
-    const driverId = this.standing().Driver.driverId;
+  private buildMultiDriverChartData(): void {
+    const selectedIds = this.selectedDriverIds();
+    if (selectedIds.length === 0 || this.standingsByRound.length === 0) {
+      return;
+    }
+
+    const datasets: ChartConfiguration['data']['datasets'] = [];
+    const allProgressionPoints = new Map<number, PointsProgression>();
+
+    selectedIds.forEach((driverId) => {
+      const driver = this.availableDrivers().find((d) => d.driverId === driverId);
+      if (!driver) return;
+
+      const progression = this.buildDriverProgression(driverId);
+      if (progression.length === 0) return;
+
+      // Track all rounds and their progression data
+      progression.forEach((p) => {
+        if (!allProgressionPoints.has(p.round)) {
+          allProgressionPoints.set(p.round, p);
+        }
+      });
+
+      // Create datasets for actual and projected data
+      const actualDataPoints: (number | null)[] = [];
+      const projectedDataPoints: (number | null)[] = [];
+
+      progression.forEach((p) => {
+        if (p.isProjected) {
+          actualDataPoints.push(null);
+          projectedDataPoints.push(p.points);
+        } else {
+          actualDataPoints.push(p.points);
+          const isLastActual =
+            progression.findIndex((item) => item.isProjected) - 1 === progression.indexOf(p);
+          projectedDataPoints.push(isLastActual ? p.points : null);
+        }
+      });
+
+      // Actual data dataset
+      datasets.push({
+        data: actualDataPoints,
+        label: driver.name,
+        borderColor: driver.teamColor,
+        backgroundColor: `${driver.teamColor}20`,
+        pointBackgroundColor: driver.teamColor,
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: driver.teamColor,
+        fill: false,
+        tension: 0.4,
+        borderWidth: 3,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        spanGaps: false,
+      });
+
+      // Projected data dataset
+      datasets.push({
+        data: projectedDataPoints,
+        label: `${driver.name} (Projected)`,
+        borderColor: `${driver.teamColor}80`,
+        backgroundColor: `${driver.teamColor}10`,
+        pointBackgroundColor: `${driver.teamColor}80`,
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: `${driver.teamColor}80`,
+        fill: false,
+        tension: 0.4,
+        borderWidth: 2,
+        borderDash: [10, 5],
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        spanGaps: false,
+      });
+    });
+
+    // Sort rounds and create labels from race names
+    const sortedRounds = Array.from(allProgressionPoints.entries())
+      .sort(([roundA], [roundB]) => roundA - roundB);
+
+    const labels = sortedRounds.map(([, progression]) => progression.raceName);
+
+    this.lineChartData = {
+      labels,
+      datasets,
+    };
+
+    this.chart?.update();
+  }
+
+  private buildDriverProgression(driverId: string): PointsProgression[] {
     const progression: PointsProgression[] = [];
 
     // Build actual points progression from completed races
-    standingsByRound.forEach((roundStandings) => {
+    this.standingsByRound.forEach((roundStandings) => {
       const driverStanding = roundStandings.DriverStandings.find(
         (ds) => ds.Driver.driverId === driverId
       );
 
       if (driverStanding) {
         const roundNum = Number.parseInt(roundStandings.round, 10);
-        const race = races.find((r) => Number.parseInt(r.round, 10) === roundNum);
+        const race = this.races.find((r) => Number.parseInt(r.round, 10) === roundNum);
 
         progression.push({
           round: roundNum,
@@ -234,116 +385,63 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Sort progression by round number to ensure correct order
+    // Sort progression by round number
     progression.sort((a, b) => a.round - b.round);
 
-    // Calculate projection for remaining races
+    // Add projections
+    this.addProjections(progression);
+
+    return progression;
+  }
+
+  private addProjections(progression: PointsProgression[]): void {
     const lastRound = progression.length > 0 ? progression[progression.length - 1] : null;
-    if (lastRound && progression.length > 0) {
-      // Sort races by round number
-      const sortedRaces = [...races].sort(
-        (a, b) => Number.parseInt(a.round, 10) - Number.parseInt(b.round, 10)
-      );
+    if (!lastRound || progression.length === 0) return;
 
-      const remainingRaces = sortedRaces.filter((race) => {
-        const roundNum = Number.parseInt(race.round, 10);
-        const raceDate = this.getRaceDate(race);
-        return roundNum > lastRound.round && raceDate.getTime() > new Date().getTime();
-      });
+    const sortedRaces = [...this.races].sort(
+      (a, b) => Number.parseInt(a.round, 10) - Number.parseInt(b.round, 10)
+    );
 
-      // Calculate weighted average points per race (giving more weight to recent races)
-      let weightedAvg = 0;
-      let totalWeight = 0;
-      const recentRacesCount = Math.min(5, progression.length); // Use last 5 races or all if less
-
-      for (let i = 0; i < recentRacesCount; i++) {
-        const index = progression.length - 1 - i;
-        const currentPoints = progression[index].points;
-        const previousPoints = index > 0 ? progression[index - 1].points : 0;
-        const pointsGained = currentPoints - previousPoints;
-
-        // Weight: more recent races get higher weight
-        const weight = recentRacesCount - i;
-        weightedAvg += pointsGained * weight;
-        totalWeight += weight;
-      }
-
-      const avgPointsPerRace = totalWeight > 0 ? weightedAvg / totalWeight : 0;
-
-      let lastProjectedPoints = lastRound.points;
-      remainingRaces.forEach((race) => {
-        const roundNum = Number.parseInt(race.round, 10);
-        lastProjectedPoints += avgPointsPerRace;
-
-        progression.push({
-          round: roundNum,
-          points: lastProjectedPoints,
-          raceName: race.raceName,
-          isProjected: true,
-        });
-      });
-    }
-
-    // Update chart data
-    // Create aligned data arrays where each index corresponds to the same round in labels
-    const labels = progression.map((p) => p.raceName);
-    const actualDataPoints: (number | null)[] = [];
-    const projectedDataPoints: (number | null)[] = [];
-
-    progression.forEach((p) => {
-      if (p.isProjected) {
-        actualDataPoints.push(null);
-        projectedDataPoints.push(p.points);
-      } else {
-        actualDataPoints.push(p.points);
-        // Add connection point for projected line
-        const isLastActual =
-          progression.findIndex((item) => item.isProjected) - 1 === progression.indexOf(p);
-        projectedDataPoints.push(isLastActual ? p.points : null);
-      }
+    const remainingRaces = sortedRaces.filter((race) => {
+      const roundNum = Number.parseInt(race.round, 10);
+      const raceDate = this.getRaceDate(race);
+      return roundNum > lastRound.round && raceDate.getTime() > new Date().getTime();
     });
 
-    this.lineChartData = {
-      labels,
-      datasets: [
-        {
-          data: actualDataPoints,
-          label: `${this.standing().Driver.givenName} ${this.standing().Driver.familyName}`,
-          borderColor: this.teamColor(),
-          backgroundColor: `${this.teamColor()}20`,
-          pointBackgroundColor: this.teamColor(),
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: this.teamColor(),
-          fill: 'origin',
-          tension: 0.4,
-          borderWidth: 3,
-          pointRadius: 5,
-          pointHoverRadius: 7,
-          spanGaps: false,
-        },
-        {
-          data: projectedDataPoints,
-          label: 'Projected',
-          borderColor: `${this.teamColor()}80`,
-          backgroundColor: `${this.teamColor()}10`,
-          pointBackgroundColor: `${this.teamColor()}80`,
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: `${this.teamColor()}80`,
-          fill: false,
-          tension: 0.4,
-          borderWidth: 2,
-          borderDash: [10, 5],
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          spanGaps: false,
-        },
-      ],
-    };
+    if (remainingRaces.length === 0) return;
 
-    this.chart?.update();
+    // Calculate weighted average points per race
+    let weightedAvg = 0;
+    let totalWeight = 0;
+    const recentRacesCount = Math.min(5, progression.length);
+
+    for (let i = 0; i < recentRacesCount; i++) {
+      const index = progression.length - 1 - i;
+      const currentPoints = progression[index].points;
+      const previousPoints = index > 0 ? progression[index - 1].points : 0;
+      const pointsGained = currentPoints - previousPoints;
+
+      const weight = recentRacesCount - i;
+      weightedAvg += pointsGained * weight;
+      totalWeight += weight;
+    }
+
+    const avgPointsPerRace = totalWeight > 0 ? weightedAvg / totalWeight : 0;
+
+    let lastProjectedPoints = lastRound.points;
+    remainingRaces.forEach((race) => {
+      const roundNum = Number.parseInt(race.round, 10);
+      lastProjectedPoints += avgPointsPerRace;
+
+      progression.push({
+        round: roundNum,
+        points: lastProjectedPoints,
+        raceName: race.raceName,
+        isProjected: true,
+      });
+    });
   }
+
 
   private getRaceDate(race: Race): Date {
     const baseTime = race.time ?? '00:00:00';
