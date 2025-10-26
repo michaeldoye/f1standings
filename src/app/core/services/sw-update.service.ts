@@ -49,6 +49,7 @@ export class SwUpdateService {
       try {
         const updateFound = await this.swUpdate.checkForUpdate();
         console.log(updateFound ? 'A new version is available.' : 'Already on the latest version.');
+        this.promptUserToUpdate();
       } catch (err) {
         console.error('Failed to check for updates:', err);
       }
