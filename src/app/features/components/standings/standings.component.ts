@@ -4,6 +4,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { forkJoin } from 'rxjs';
+import {
+  CHART_CONFIG,
+  F1_POINTS,
+  NATIONALITY_TO_CODE,
+} from '../../../core/constants/app.constants';
 import { DriverStanding, Race } from '../../../core/models/jolpica.model';
 import { JolpicaApiService } from '../../../core/services/jolpica-api.service';
 import { OpenF1ApiService } from '../../../core/services/openf1-api.service';
@@ -32,35 +37,6 @@ export class StandingsComponent implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly teamColors = signal<Map<string, string>>(new Map());
   protected readonly championshipProbabilities = signal<Map<string, number>>(new Map());
-
-  // F1 Points system constants
-  private readonly MAX_RACE_POINTS = 25; // 25 for win
-  private readonly MAX_SPRINT_POINTS = 8; // Sprint race winner
-
-  // Map nationality to country code for flag emoji
-  private readonly nationalityToCode: Record<string, string> = {
-    Australian: 'AU',
-    Austrian: 'AT',
-    British: 'GB',
-    Canadian: 'CA',
-    Chinese: 'CN',
-    Danish: 'DK',
-    Dutch: 'NL',
-    Finnish: 'FI',
-    French: 'FR',
-    German: 'DE',
-    Italian: 'IT',
-    Japanese: 'JP',
-    Mexican: 'MX',
-    Monegasque: 'MC',
-    'New Zealander': 'NZ',
-    Polish: 'PL',
-    Spanish: 'ES',
-    Swedish: 'SE',
-    Swiss: 'CH',
-    Thai: 'TH',
-    American: 'US',
-  };
 
   ngOnInit(): void {
     this.loadStandings();
@@ -114,9 +90,9 @@ export class StandingsComponent implements OnInit {
     // Calculate maximum remaining points
     let maxRemainingPoints = 0;
     remainingRaces.forEach((race) => {
-      maxRemainingPoints += this.MAX_RACE_POINTS;
+      maxRemainingPoints += F1_POINTS.MAX_RACE_POINTS;
       if (race.Sprint) {
-        maxRemainingPoints += this.MAX_SPRINT_POINTS;
+        maxRemainingPoints += F1_POINTS.MAX_SPRINT_POINTS;
       }
     });
 
@@ -184,7 +160,7 @@ export class StandingsComponent implements OnInit {
   }
 
   protected getCountryFlag(nationality: string): string {
-    const countryCode = this.nationalityToCode[nationality];
+    const countryCode = NATIONALITY_TO_CODE[nationality];
     if (!countryCode) return '🏁';
 
     // Convert country code to flag emoji
@@ -196,7 +172,7 @@ export class StandingsComponent implements OnInit {
 
   protected getTeamColor(standing: DriverStanding): string {
     const color = this.teamColors().get(standing.Driver.permanentNumber);
-    return color ? `#${color}` : '#667eea'; // Default to purple if no color found
+    return color ? `#${color}` : CHART_CONFIG.DEFAULT_COLOR;
   }
 
   protected getChampionshipProbability(standing: DriverStanding): number {

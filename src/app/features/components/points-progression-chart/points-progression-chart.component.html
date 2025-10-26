@@ -1,33 +1,42 @@
 <div class="chart-container">
   <div class="chart-header">
     <h3>Points Progression</h3>
-    <mat-form-field class="driver-selector" appearance="outline">
-      <mat-label>Compare Drivers</mat-label>
-      <mat-select multiple [value]="selectedDriverIds()">
-        @for (driver of availableDrivers(); track driver.driverId) {
-          <mat-option [value]="driver.driverId" (click)="toggleDriver(driver.driverId)">
-            {{ driver.name }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-    <div class="legend">
-      <span class="legend-item">
-        <span class="legend-line actual"></span>
-        Actual
-      </span>
-      <span class="legend-item">
-        <span class="legend-line projected"></span>
-        Projected
-      </span>
+    @if (!loading()) {
+      <mat-form-field class="driver-selector" appearance="outline">
+        <mat-label>Compare Drivers</mat-label>
+        <mat-select multiple [value]="selectedDriverIds()">
+          @for (driver of availableDrivers(); track driver.driverId) {
+            <mat-option [value]="driver.driverId" (click)="toggleDriver(driver.driverId)">
+              {{ driver.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <div class="legend">
+        <span class="legend-item">
+          <span class="legend-line actual"></span>
+          Actual
+        </span>
+        <span class="legend-item">
+          <span class="legend-line projected"></span>
+          Projected
+        </span>
+      </div>
+    }
+  </div>
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner [diameter]="spinnerDiameter"></mat-spinner>
+      <p>Loading points progression...</p>
     </div>
-  </div>
-  <div class="chart-wrapper">
-    <canvas
-      baseChart
-      [type]="lineChartType"
-      [data]="lineChartData"
-      [options]="lineChartOptions"
-    ></canvas>
-  </div>
+  } @else {
+    <div class="chart-wrapper">
+      <canvas
+        baseChart
+        [type]="lineChartType"
+        [data]="lineChartData"
+        [options]="lineChartOptions"
+      ></canvas>
+    </div>
+  }
 </div>

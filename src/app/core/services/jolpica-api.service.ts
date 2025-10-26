@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
+import { API_CONFIG } from '../constants/app.constants';
 import {
   DriverStanding,
   JolpicaResponse,
@@ -13,7 +14,7 @@ import {
 })
 export class JolpicaApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://api.jolpi.ca/ergast/f1';
+  private readonly baseUrl = API_CONFIG.JOLPICA_BASE_URL;
 
   getCurrentDriverStandings(): Observable<DriverStanding[]> {
     return this.http.get<JolpicaResponse>(`${this.baseUrl}/current/driverStandings.json`).pipe(

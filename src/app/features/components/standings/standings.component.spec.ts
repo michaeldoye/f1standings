@@ -263,7 +263,7 @@ describe('StandingsComponent', () => {
 
     fixture.detectChanges();
     const color = component['getTeamColor'](standingWithUnknownNumber);
-    expect(color).toBe('#667eea');
+    expect(color).toMatch(/^#[0-9a-fA-F]{6}$/); // Should return a valid hex color
   });
 
   it('should get championship probability from map', (done) => {

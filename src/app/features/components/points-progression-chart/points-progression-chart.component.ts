@@ -11,10 +11,12 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { concatMap, delay, from, map, of, switchMap, toArray } from 'rxjs';
+import { API_CONFIG, CHART_CONFIG } from '../../../core/constants/app.constants';
 import { DriverStanding, Race, StandingsList } from '../../../core/models/jolpica.model';
 import { JolpicaApiService } from '../../../core/services/jolpica-api.service';
 
@@ -34,7 +36,14 @@ interface DriverSelection {
 
 @Component({
   selector: 'app-points-progression-chart',
-  imports: [BaseChartDirective, CommonModule, MatFormFieldModule, MatSelectModule, FormsModule],
+  imports: [
+    BaseChartDirective,
+    CommonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatProgressSpinnerModule,
+    FormsModule,
+  ],
   templateUrl: './points-progression-chart.component.html',
   styleUrl: './points-progression-chart.component.scss',
 })
@@ -42,7 +51,6 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   private readonly jolpicaService = inject(JolpicaApiService);
-  private readonly REQUEST_DELAY_MS = 150;
 
   readonly standing = input.required<DriverStanding>();
   readonly teamColor = input.required<string>();
@@ -51,6 +59,8 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
 
   protected readonly availableDrivers = signal<DriverSelection[]>([]);
   protected readonly selectedDriverIds = signal<string[]>([]);
+  protected readonly loading = signal<boolean>(true);
+  protected readonly spinnerDiameter = CHART_CONFIG.SPINNER_DIAMETER;
 
   private readonly isDarkMode = signal(false);
   private themeObserver?: MutationObserver;
@@ -113,7 +123,7 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
 
   private getDriverColor(standing: DriverStanding): string {
     const color = this.teamColors().get(standing.Driver.permanentNumber);
-    return color ? `#${color}` : '#667eea';
+    return color ? `#${color}` : CHART_CONFIG.DEFAULT_COLOR;
   }
 
   protected toggleDriver(driverId: string): void {
@@ -241,7 +251,7 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
                     round: race.round,
                     DriverStandings: driverStandings,
                   })),
-                  delay(index === 0 ? 0 : this.REQUEST_DELAY_MS)
+                  delay(index === 0 ? 0 : API_CONFIG.REQUEST_DELAY_MS)
                 )
             ),
             toArray(),
@@ -253,20 +263,24 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
         next: ({ races, standingsByRound }) => {
           if (races.length === 0) {
             console.warn('No races found');
+            this.loading.set(false);
             return;
           }
 
           if (standingsByRound.length === 0) {
             console.warn('No standings available for completed rounds');
+            this.loading.set(false);
             return;
           }
 
           this.races = races;
           this.standingsByRound = standingsByRound;
           this.buildMultiDriverChartData();
+          this.loading.set(false);
         },
         error: (err) => {
           console.error('Error loading points progression data:', err);
+          this.loading.set(false);
         },
       });
   }

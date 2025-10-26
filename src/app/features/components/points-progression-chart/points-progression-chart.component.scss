@@ -70,6 +70,21 @@
   width: 100%;
 }
 
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 350px;
+  gap: 1rem;
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #666;
+  }
+}
+
 // Dark mode styles
 :host-context(html.dark-theme) {
   .chart-container {
@@ -85,6 +100,10 @@
     .legend .legend-item {
       color: #9ca3af;
     }
+  }
+
+  .loading-container p {
+    color: #9ca3af;
   }
 }
 

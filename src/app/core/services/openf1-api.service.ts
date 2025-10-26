@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { API_CONFIG } from '../constants/app.constants';
 import { Driver, Session, SessionResult } from '../models/driver.model';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { Driver, Session, SessionResult } from '../models/driver.model';
 })
 export class OpenF1ApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://api.openf1.org/v1';
+  private readonly baseUrl = API_CONFIG.OPENF1_BASE_URL;
 
   getLatestSessionDrivers(): Observable<Driver[]> {
     return this.http.get<Driver[]>(`${this.baseUrl}/drivers?session_key=latest`);
