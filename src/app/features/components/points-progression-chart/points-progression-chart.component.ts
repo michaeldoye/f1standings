@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { forkJoin } from 'rxjs';
+import { concatMap, delay, from, map, of, switchMap, toArray } from 'rxjs';
 import { DriverStanding, Race, StandingsList } from '../../../core/models/jolpica.model';
 import { JolpicaApiService } from '../../../core/services/jolpica-api.service';
 
@@ -31,6 +31,7 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   private readonly jolpicaService = inject(JolpicaApiService);
+  private readonly REQUEST_DELAY_MS = 150;
 
   readonly standing = input.required<DriverStanding>();
   readonly teamColor = input.required<string>();
@@ -152,53 +153,62 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
   }
 
   private loadPointsProgression(): void {
-    this.jolpicaService.getCurrentSeasonRaces().subscribe({
-      next: (races) => {
-        if (races.length === 0) {
-          console.warn('No races found');
-          return;
-        }
+    this.jolpicaService
+      .getCurrentSeasonRaces()
+      .pipe(
+        switchMap((races) => {
+          if (races.length === 0) {
+            console.warn('No races found');
+            return of({ races, standingsByRound: [] as StandingsList[] });
+          }
 
-        // Get season from races data
-        const season = Number.parseInt(races[0].season, 10);
+          const season = Number.parseInt(races[0].season, 10);
+          const now = new Date();
+          const completedRaces = races
+            .filter((race) => this.getRaceDate(race).getTime() < now.getTime())
+            .sort((a, b) => Number.parseInt(a.round, 10) - Number.parseInt(b.round, 10));
 
-        // Determine which races are completed
-        const now = new Date();
-        const completedRaces = races.filter((race) => {
-          const raceDate = this.getRaceDate(race);
-          return raceDate.getTime() < now.getTime();
-        });
+          if (completedRaces.length === 0) {
+            console.warn('No completed races found');
+            return of({ races, standingsByRound: [] as StandingsList[] });
+          }
 
-        // Fetch standings for each completed round
-        const standingsRequests = completedRaces.map((race) =>
-          this.jolpicaService.getDriverStandingsByRound(season, Number.parseInt(race.round, 10))
-        );
+          return from(completedRaces).pipe(
+            concatMap((race, index) =>
+              this.jolpicaService
+                .getDriverStandingsByRound(season, Number.parseInt(race.round, 10))
+                .pipe(
+                  map((driverStandings) => ({
+                    season: season.toString(),
+                    round: race.round,
+                    DriverStandings: driverStandings,
+                  })),
+                  delay(index === 0 ? 0 : this.REQUEST_DELAY_MS)
+                )
+            ),
+            toArray(),
+            map((standingsByRound) => ({ races, standingsByRound }))
+          );
+        })
+      )
+      .subscribe({
+        next: ({ races, standingsByRound }) => {
+          if (races.length === 0) {
+            console.warn('No races found');
+            return;
+          }
 
-        if (standingsRequests.length === 0) {
-          console.warn('No completed races found');
-          return;
-        }
+          if (standingsByRound.length === 0) {
+            console.warn('No standings available for completed rounds');
+            return;
+          }
 
-        forkJoin(standingsRequests).subscribe({
-          next: (standingsArray) => {
-            // Combine standings with race info
-            const standingsByRound: StandingsList[] = completedRaces.map((race, index) => ({
-              season: season.toString(),
-              round: race.round,
-              DriverStandings: standingsArray[index],
-            }));
-
-            this.buildChartData(standingsByRound, races);
-          },
-          error: (err) => {
-            console.error('Error loading standings by round:', err);
-          },
-        });
-      },
-      error: (err) => {
-        console.error('Error loading races:', err);
-      },
-    });
+          this.buildChartData(standingsByRound, races);
+        },
+        error: (err) => {
+          console.error('Error loading points progression data:', err);
+        },
+      });
   }
 
   private buildChartData(standingsByRound: StandingsList[], races: Race[]): void {
