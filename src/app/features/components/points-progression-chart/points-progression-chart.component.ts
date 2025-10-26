@@ -98,7 +98,6 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
     this.themeObserver?.disconnect();
   }
 
-
   private initializeDrivers(): void {
     const currentDriverId = this.standing().Driver.driverId;
     const drivers: DriverSelection[] = this.allStandings().map((standing) => ({
@@ -350,8 +349,9 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
     });
 
     // Sort rounds and create labels from race names
-    const sortedRounds = Array.from(allProgressionPoints.entries())
-      .sort(([roundA], [roundB]) => roundA - roundB);
+    const sortedRounds = Array.from(allProgressionPoints.entries()).sort(
+      ([roundA], [roundB]) => roundA - roundB
+    );
 
     const labels = sortedRounds.map(([, progression]) => progression.raceName);
 
@@ -441,7 +441,6 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
       });
     });
   }
-
 
   private getRaceDate(race: Race): Date {
     const baseTime = race.time ?? '00:00:00';
