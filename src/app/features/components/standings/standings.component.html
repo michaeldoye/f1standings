@@ -16,25 +16,85 @@
 
   @if (!loading() && !error() && driverStandings().length > 0) {
     <div class="drivers-container">
-      <mat-accordion>
-        @for (standing of driverStandings(); track standing.Driver.driverId; let i = $index) {
-          <app-driver-standing-card
-            [standing]="standing"
-            [expanded]="step() === i"
-            [countryFlag]="getCountryFlag(standing.Driver.nationality)"
-            [teamColor]="getTeamColor(standing)"
-            [probability]="getChampionshipProbability(standing)"
-            [probabilityTooltip]="getProbabilityTooltip(standing)"
-            [isFirst]="step() === 0"
-            [isLast]="step() === driverStandings().length - 1"
-            [allStandings]="driverStandings()"
-            [teamColors]="teamColors()"
-            (opened)="setStep(i)"
-            (previous)="prevStep()"
-            (next)="nextStep()"
-          />
+      <div class="standings-toolbar">
+        <button
+          mat-icon-button
+          class="filter-toggle-btn"
+          type="button"
+          (click)="filterVisible.set(!filterVisible())"
+          [attr.aria-pressed]="filterVisible()"
+          aria-label="Show driver filter"
+        >
+          <mat-icon>filter_list</mat-icon>
+        </button>
+
+        @if (filterVisible()) {
+          <mat-form-field
+            appearance="outline"
+            class="driver-filter-field"
+            floatLabel="auto"
+            subscriptSizing="dynamic"
+          >
+            <mat-label>Filter drivers</mat-label>
+            <input
+              matInput
+              type="text"
+              placeholder="Search by name, code, or team"
+              [formControl]="driverFilterControl"
+              [matAutocomplete]="driverFilterAuto"
+              aria-label="Filter drivers"
+            />
+            @if (driverFilterControl.value) {
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                class="clear-filter-btn"
+                (click)="clearFilter()"
+                aria-label="Clear filter"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+          </mat-form-field>
         }
-      </mat-accordion>
+
+        <mat-autocomplete #driverFilterAuto="matAutocomplete" autoActiveFirstOption>
+          @for (standing of filteredStandings(); track standing.Driver.driverId) {
+            <mat-option [value]="getDriverFullName(standing)">
+              {{ getDriverFullName(standing) }} • {{ getTeamName(standing) }}
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </div>
+
+      @if (filteredStandings().length === 0) {
+        <mat-card class="no-results-card">
+          <mat-card-content>
+            <p>No drivers match your search.</p>
+          </mat-card-content>
+        </mat-card>
+      } @else {
+        <mat-accordion>
+          @for (standing of filteredStandings(); track standing.Driver.driverId; let i = $index) {
+            <app-driver-standing-card
+              [standing]="standing"
+              [expanded]="step() === i"
+              [countryFlag]="getCountryFlag(standing.Driver.nationality)"
+              [teamColor]="getTeamColor(standing)"
+              [probability]="getChampionshipProbability(standing)"
+              [probabilityTooltip]="getProbabilityTooltip(standing)"
+              [isFirst]="step() === 0"
+              [isLast]="step() === filteredStandings().length - 1"
+              [allStandings]="driverStandings()"
+              [teamColors]="teamColors()"
+              (opened)="setStep(i)"
+              (previous)="prevStep()"
+              (next)="nextStep()"
+            />
+          }
+        </mat-accordion>
+      }
     </div>
   }
 

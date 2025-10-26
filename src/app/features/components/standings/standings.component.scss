@@ -44,6 +44,38 @@
   margin-top: 1rem;
 }
 
+.standings-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.filter-toggle-btn {
+  align-self: flex-start;
+}
+
+.driver-filter-field {
+  width: 320px;
+  max-width: 100%;
+}
+
+.clear-filter-btn {
+  margin-right: 0.5rem;
+}
+
+.no-results-card {
+  margin-top: 1rem;
+  text-align: center;
+
+  p {
+    margin: 0;
+    color: #666;
+    font-weight: 500;
+  }
+}
+
 .no-data-message {
   text-align: center;
   color: #666;
@@ -96,6 +128,10 @@
   .no-data-message {
     color: #9ca3af;
   }
+
+  .no-results-card p {
+    color: #cbd5f5;
+  }
 }
 
 // Responsive design
@@ -110,5 +146,9 @@
 
   .points {
     font-size: 1rem !important;
+  }
+
+  .standings-toolbar {
+    justify-content: stretch;
   }
 }
