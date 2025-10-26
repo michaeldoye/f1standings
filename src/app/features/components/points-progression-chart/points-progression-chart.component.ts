@@ -286,7 +286,7 @@ export class PointsProgressionChartComponent implements OnInit, OnDestroy {
 
     // Update chart data
     // Create aligned data arrays where each index corresponds to the same round in labels
-    const labels = progression.map((p) => `R${p.round}`);
+    const labels = progression.map((p) => p.raceName);
     const actualDataPoints: (number | null)[] = [];
     const projectedDataPoints: (number | null)[] = [];
 
