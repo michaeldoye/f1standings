@@ -10,6 +10,7 @@
     "format": "prettier --write \"src/**/*.{ts,html,scss,css,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss,css,json}\"",
     "lint:prettier": "prettier --check \"src/**/*.{ts,html,scss,css,json}\"",
+    "lint:commit": "commitlint --edit",
     "deploy": "firebase deploy --only hosting:f1standings",
     "prepare": "husky"
   },
@@ -36,6 +37,8 @@
     "@angular/build": "^20.3.6",
     "@angular/cli": "^20.3.6",
     "@angular/compiler-cli": "^20.3.0",
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@types/jasmine": "~5.1.0",
     "husky": "^9.1.7",
     "jasmine-core": "~5.9.0",
