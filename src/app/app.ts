@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { RouterOutlet } from '@angular/router';
+import { SwUpdateService } from './core/services/sw-update.service';
 
 @Component({
   selector: 'app-root',
@@ -13,10 +14,14 @@ import { RouterOutlet } from '@angular/router';
 })
 export class App {
   private readonly document = inject(DOCUMENT);
+  private readonly swUpdate = inject(SwUpdateService);
   protected readonly title = signal('f1standings');
   protected readonly isDarkMode = signal(false);
 
   constructor() {
+    // Initialize service worker updates
+    this.swUpdate.init();
+
     // Initialize dark mode from localStorage or system preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {

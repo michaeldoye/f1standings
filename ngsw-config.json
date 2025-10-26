@@ -26,5 +26,53 @@
         ]
       }
     }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-jolpica",
+      "urls": [
+        "https://api.jolpi.ca/ergast/f1/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 100,
+        "maxAge": "1h",
+        "timeout": "10s",
+        "strategy": "freshness"
+      }
+    },
+    {
+      "name": "api-openf1",
+      "urls": [
+        "https://api.openf1.org/v1/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 50,
+        "maxAge": "1h",
+        "timeout": "10s",
+        "strategy": "freshness"
+      }
+    },
+    {
+      "name": "api-jolpica-fallback",
+      "urls": [
+        "https://api.jolpi.ca/ergast/f1/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 100,
+        "maxAge": "7d",
+        "strategy": "performance"
+      }
+    },
+    {
+      "name": "api-openf1-fallback",
+      "urls": [
+        "https://api.openf1.org/v1/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 50,
+        "maxAge": "7d",
+        "strategy": "performance"
+      }
+    }
   ]
 }
