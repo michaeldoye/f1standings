@@ -92,6 +92,59 @@ body {
       subhead-color: #222,
     )
   );
+
+  @include mat.form-field-overrides(
+    (
+      // container-text-color: #222,
+      // label-text-color: #005cbb,
+      enabled-select-arrow-color: #005cbb,
+      hover-state-layer-opacity: 0.08
+    )
+  );
+
+  @include mat.select-overrides(
+    (
+      enabled-trigger-text-color: #222,
+      enabled-arrow-color: #005cbb,
+    )
+  );
+
+  // Placeholder text styling for light mode
+  .mat-mdc-input-element::placeholder {
+    color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+  }
+
+  .mat-mdc-input-element::-webkit-input-placeholder {
+    color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+  }
+
+  .mat-mdc-input-element::-moz-placeholder {
+    color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+  }
+
+  .mat-mdc-input-element:-ms-input-placeholder {
+    color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+  }
+
+  // Autocomplete panel styling for light mode
+  @include mat.autocomplete-overrides(
+    (
+      // container-background-color: #ffffff,
+       // container-text-color: #222,
+    )
+  );
+
+  @include mat.option-overrides(
+    (
+      // label-text-color: #222,
+      selected-state-label-text-color: #005cbb,
+      hover-state-layer-color: #005cbb
+    )
+  );
 }
 
 html.dark-theme {
@@ -112,6 +165,59 @@ html.dark-theme {
     (
       container-color: #1e293b,
       supporting-text-color: #e5e7eb,
+    )
+  );
+
+  @include mat.form-field-overrides(
+    (
+      // container-text-color: #e5e7eb,
+      // label-text-color: #60a5fa,
+      enabled-select-arrow-color: #60a5fa,
+      hover-state-layer-opacity: 0.12
+    )
+  );
+
+  @include mat.select-overrides(
+    (
+      enabled-trigger-text-color: #e5e7eb,
+      enabled-arrow-color: #60a5fa,
+    )
+  );
+
+  // Placeholder text styling for dark mode
+  .mat-mdc-input-element::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    opacity: 1;
+  }
+
+  .mat-mdc-input-element::-webkit-input-placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    opacity: 1;
+  }
+
+  .mat-mdc-input-element::-moz-placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    opacity: 1;
+  }
+
+  .mat-mdc-input-element:-ms-input-placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    opacity: 1;
+  }
+
+  // Autocomplete panel styling for dark mode
+  @include mat.autocomplete-overrides(
+    (
+      // container-background-color: #1e293b,
+       // container-text-color: #e5e7eb,
+    )
+  );
+
+  @include mat.option-overrides(
+    (
+      label-text-color: #e5e7eb,
+      selected-state-label-text-color: #60a5fa,
+      hover-state-layer-color: #60a5fa,
     )
   );
 }

@@ -54,6 +54,15 @@
 
 .filter-toggle-btn {
   align-self: flex-start;
+  color: #005cbb;
+
+  mat-icon {
+    color: inherit;
+  }
+
+  &:hover {
+    background-color: rgba(0, 92, 187, 0.08);
+  }
 }
 
 .driver-filter-field {
@@ -63,6 +72,15 @@
 
 .clear-filter-btn {
   margin-right: 0.5rem;
+  color: #005cbb;
+
+  mat-icon {
+    color: inherit;
+  }
+
+  &:hover {
+    background-color: rgba(0, 92, 187, 0.08);
+  }
 }
 
 .no-results-card {
@@ -131,6 +149,22 @@
 
   .no-results-card p {
     color: #cbd5f5;
+  }
+
+  .filter-toggle-btn {
+    color: #60a5fa;
+
+    &:hover {
+      background-color: rgba(96, 165, 250, 0.12);
+    }
+  }
+
+  .clear-filter-btn {
+    color: #60a5fa;
+
+    &:hover {
+      background-color: rgba(96, 165, 250, 0.12);
+    }
   }
 }
 
