@@ -1,4 +1,5 @@
 import { ApplicationRef, inject, Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SwUpdate } from '@angular/service-worker';
 import { concat, interval } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -15,6 +16,7 @@ import { first } from 'rxjs/operators';
 export class SwUpdateService {
   private readonly swUpdate = inject(SwUpdate);
   private readonly appRef = inject(ApplicationRef);
+  private readonly snackBar = inject(MatSnackBar);
 
   /**
    * Initialize service worker update checks
@@ -94,12 +96,15 @@ export class SwUpdateService {
    * Prompt user to reload the app with the new version
    */
   private promptUserToUpdate(): void {
-    const message =
-      'A new version of F1 Standings is available! Reload the page to get the latest features and improvements.';
+    const snackBarRef = this.snackBar.open('A new version is available!', 'Reload', {
+      duration: 0,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
 
-    if (confirm(message)) {
+    snackBarRef.onAction().subscribe(() => {
       this.activateUpdate();
-    }
+    });
   }
 
   /**
