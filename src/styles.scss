@@ -98,7 +98,9 @@ body {
       // container-text-color: #222,
       // label-text-color: #005cbb,
       enabled-select-arrow-color: #005cbb,
-      hover-state-layer-opacity: 0.08
+      hover-state-layer-opacity: 0.08,
+      container-height: 50px,
+      outlined-input-text-placeholder-color: black
     )
   );
 
@@ -173,7 +175,9 @@ html.dark-theme {
       // container-text-color: #e5e7eb,
       // label-text-color: #60a5fa,
       enabled-select-arrow-color: #60a5fa,
-      hover-state-layer-opacity: 0.12
+      hover-state-layer-opacity: 0.12,
+      container-height: 50px,
+      outlined-input-text-placeholder-color: black
     )
   );
 
@@ -209,7 +213,9 @@ html.dark-theme {
   @include mat.autocomplete-overrides(
     (
       // container-background-color: #1e293b,
-       // container-text-color: #e5e7eb,
+      // container-text-color: #e5e7eb,
+      //container-height: 50px,
+       //outlined-input-text-placeholder-color: black,
     )
   );
 
