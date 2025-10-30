@@ -16,57 +16,6 @@
 
   @if (!loading() && !error() && driverStandings().length > 0) {
     <div class="drivers-container">
-      <div class="standings-toolbar">
-        <button
-          mat-icon-button
-          class="filter-toggle-btn"
-          type="button"
-          (click)="filterVisible.set(!filterVisible())"
-          [attr.aria-pressed]="filterVisible()"
-          aria-label="Show driver filter"
-        >
-          <mat-icon>search</mat-icon>
-        </button>
-
-        @if (filterVisible()) {
-          <mat-form-field
-            appearance="outline"
-            class="driver-filter-field"
-            floatLabel="auto"
-            subscriptSizing="dynamic"
-          >
-            <mat-label>Search by name, code, or team</mat-label>
-            <input
-              matInput
-              type="text"
-              [formControl]="driverFilterControl"
-              [matAutocomplete]="driverFilterAuto"
-              aria-label="Search by name, code, or team"
-            />
-            @if (driverFilterControl.value) {
-              <button
-                mat-icon-button
-                matSuffix
-                type="button"
-                class="clear-filter-btn"
-                (click)="clearFilter()"
-                aria-label="Clear filter"
-              >
-                <mat-icon>close</mat-icon>
-              </button>
-            }
-          </mat-form-field>
-        }
-
-        <mat-autocomplete #driverFilterAuto="matAutocomplete" autoActiveFirstOption>
-          @for (standing of filteredStandings(); track standing.Driver.driverId) {
-            <mat-option [value]="getDriverFullName(standing)">
-              {{ getDriverFullName(standing) }} • {{ getTeamName(standing) }}
-            </mat-option>
-          }
-        </mat-autocomplete>
-      </div>
-
       @if (filteredStandings().length === 0) {
         <mat-card class="no-results-card">
           <mat-card-content>

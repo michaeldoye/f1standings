@@ -44,44 +44,6 @@
   margin-top: 1rem;
 }
 
-.standings-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.filter-toggle-btn {
-  color: #005cbb;
-
-  mat-icon {
-    color: inherit;
-  }
-
-  &:hover {
-    background-color: rgba(0, 92, 187, 0.08);
-  }
-}
-
-.driver-filter-field {
-  width: 320px;
-  max-width: 100%;
-}
-
-.clear-filter-btn {
-  margin-right: 0.5rem;
-  color: #005cbb;
-
-  mat-icon {
-    color: inherit;
-  }
-
-  &:hover {
-    background-color: rgba(0, 92, 187, 0.08);
-  }
-}
-
 .no-results-card {
   margin-top: 1rem;
   text-align: center;
@@ -149,22 +111,6 @@
   .no-results-card p {
     color: #cbd5f5;
   }
-
-  .filter-toggle-btn {
-    color: #60a5fa;
-
-    &:hover {
-      background-color: rgba(96, 165, 250, 0.12);
-    }
-  }
-
-  .clear-filter-btn {
-    color: #60a5fa;
-
-    &:hover {
-      background-color: rgba(96, 165, 250, 0.12);
-    }
-  }
 }
 
 // Responsive design
@@ -179,9 +125,5 @@
 
   .points {
     font-size: 1rem !important;
-  }
-
-  .standings-toolbar {
-    justify-content: stretch;
   }
 }

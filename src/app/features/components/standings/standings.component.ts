@@ -2,31 +2,23 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   OnInit,
-  ViewChild,
   computed,
   effect,
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { distinctUntilChanged, forkJoin } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import {
   CHART_CONFIG,
   F1_POINTS,
   NATIONALITY_TO_CODE,
 } from '../../../core/constants/app.constants';
 import { DriverStanding, Race } from '../../../core/models/jolpica.model';
+import { FilterService } from '../../../core/services/filter.service';
 import { JolpicaApiService } from '../../../core/services/jolpica-api.service';
 import { OpenF1ApiService } from '../../../core/services/openf1-api.service';
 import { DriverStandingCardComponent } from '../driver-standing-card/driver-standing-card.component';
@@ -35,12 +27,6 @@ import { DriverStandingCardComponent } from '../driver-standing-card/driver-stan
   selector: 'app-standings',
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
     MatExpansionModule,
     MatCardModule,
     MatProgressSpinnerModule,
@@ -54,15 +40,11 @@ export class StandingsComponent implements OnInit {
   protected readonly step = signal(-1);
   private readonly jolpicaService = inject(JolpicaApiService);
   private readonly openF1Service = inject(OpenF1ApiService);
-  private readonly destroyRef = inject(DestroyRef);
-  @ViewChild(MatAutocompleteTrigger) private autocompleteTrigger?: MatAutocompleteTrigger;
+  private readonly filterService = inject(FilterService);
 
   protected readonly driverStandings = signal<DriverStanding[]>([]);
-  protected readonly driverFilterControl = new FormControl('', { nonNullable: true });
-  protected readonly driverFilter = signal('');
-  protected readonly filterVisible = signal(false);
   protected readonly filteredStandings = computed(() => {
-    const query = this.driverFilter();
+    const query = this.filterService.filterValue();
     const list = this.driverStandings();
     if (!query) {
       return list;
@@ -82,15 +64,8 @@ export class StandingsComponent implements OnInit {
   protected readonly championshipProbabilities = signal<Map<string, number>>(new Map());
 
   constructor() {
-    this.driverFilterControl.valueChanges
-      .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => this.driverFilter.set(value.trim().toLowerCase()));
-
-    // Initialize with default value
-    this.driverFilter.set(this.driverFilterControl.value.trim().toLowerCase());
-
     effect(() => {
-      this.driverFilter();
+      this.filterService.filterValue();
       this.step.set(-1);
     });
   }
@@ -240,25 +215,8 @@ export class StandingsComponent implements OnInit {
     return `${standing.Driver.givenName} ${standing.Driver.familyName}`;
   }
 
-  private resetAutocompleteSelection(): void {
-    const autocomplete = this.autocompleteTrigger?.autocomplete;
-    autocomplete?.options.forEach((option) => option.deselect());
-    this.autocompleteTrigger?.closePanel();
-  }
-
   protected getChampionshipProbability(standing: DriverStanding): number {
     return this.championshipProbabilities().get(standing.Driver.driverId) || 0;
-  }
-
-  protected clearFilter(): void {
-    if (this.driverFilterControl.value) {
-      this.driverFilterControl.setValue('');
-      this.resetAutocompleteSelection();
-    }
-
-    if (this.filterVisible()) {
-      this.filterVisible.set(false);
-    }
   }
 
   protected getProbabilityTooltip(standing: DriverStanding): string {

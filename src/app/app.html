@@ -1,8 +1,49 @@
 <mat-toolbar>
   <mat-toolbar-row>
     <mat-icon class="title-icon">flag</mat-icon>
-    <span>F1 Driver Standings</span>
+    <span class="title">F1 Driver Standings</span>
     <span class="spacer"></span>
+
+    <button
+      mat-icon-button
+      class="filter-toggle-btn"
+      type="button"
+      (click)="filterVisible.set(!filterVisible())"
+      [attr.aria-pressed]="filterVisible()"
+      aria-label="Toggle search"
+    >
+      <mat-icon>search</mat-icon>
+    </button>
+
+    @if (filterVisible()) {
+      <mat-form-field
+        appearance="outline"
+        class="driver-filter-field"
+        floatLabel="auto"
+        subscriptSizing="dynamic"
+      >
+        <mat-label>Search drivers</mat-label>
+        <input
+          matInput
+          type="text"
+          [formControl]="driverFilterControl"
+          aria-label="Search by name, code, or team"
+        />
+        @if (driverFilterControl.value) {
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            class="clear-filter-btn"
+            (click)="clearFilter()"
+            aria-label="Clear filter"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+    }
+
     <div class="theme-toggle">
       <mat-icon>light_mode</mat-icon>
       <mat-slide-toggle
